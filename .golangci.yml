@@ -1,0 +1,34 @@
+linters-settings:
+  gocyclo:
+    min-complexity: 20
+  lll:
+    line-length: 140
+  misspell:
+    locale: US
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gocyclo
+    - gofmt
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nestif
+    - staticcheck
+    - typecheck
+    - unused
+    - varcheck
+    # not compatible with go 1.19 yet
+    # - bodyclose
+    # - noctx
+    # - structcheck
+
+run:
+  timeout: 5m
+  go: "1.19"
