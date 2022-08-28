@@ -24,7 +24,7 @@ jobs:
       - name: GolangCI Lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.46.2
+          version: v1.49.0
 
   build:
     name: Build
@@ -52,14 +52,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Cluster
-        run: |
-          make cluster
-          make install
-
-      - name: MariaDB test host
-        run: sudo make mdb-add-test-host
 
       - name: Test
         run: make cover
