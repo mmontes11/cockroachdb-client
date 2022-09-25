@@ -145,14 +145,16 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 		return req, nil
 	}
 
-	buffer := new(bytes.Buffer)
+	var bodyReader io.Reader
 	if body != nil {
-		if err := json.NewEncoder(buffer).Encode(body); err != nil {
-			return nil, fmt.Errorf("error encoding body: %v", err)
+		bodyBytes, err := json.Marshal(body)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling body: %v", err)
 		}
+		bodyReader = bytes.NewReader(bodyBytes)
 	}
 
-	req, err := http.NewRequest(method, url.String(), buffer)
+	req, err := http.NewRequest(method, url.String(), bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
