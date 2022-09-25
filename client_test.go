@@ -153,7 +153,7 @@ func TestClient(t *testing.T) {
 			}
 			assert.NotNil(t, client)
 
-			req, err := client.newRequest(tt.reqMethod, "/api", tt.reqBody)
+			req, err := client.newRequest(tt.reqMethod, "/api", nil, tt.reqBody)
 			if err != nil {
 				t.Fatal(err)
 			}

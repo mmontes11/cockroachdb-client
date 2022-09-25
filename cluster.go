@@ -37,7 +37,7 @@ type CreateCluster struct {
 }
 
 func (c *ClusterClient) Get(ctx context.Context, ID string) (*Cluster, error) {
-	req, err := c.client.newRequest(http.MethodGet, fmt.Sprintf("/clusters/%s", ID), nil)
+	req, err := c.client.newRequest(http.MethodGet, fmt.Sprintf("/clusters/%s", ID), nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *ClusterClient) Get(ctx context.Context, ID string) (*Cluster, error) {
 }
 
 func (c *ClusterClient) Create(ctx context.Context, createCluster *CreateCluster) (*Cluster, error) {
-	req, err := c.client.newRequest(http.MethodPost, "/clusters", createCluster)
+	req, err := c.client.newRequest(http.MethodPost, "/clusters", nil, createCluster)
 	if err != nil {
 		return nil, err
 	}

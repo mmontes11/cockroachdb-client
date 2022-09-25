@@ -126,8 +126,8 @@ func (c *Client) handleResponse(ctx context.Context, res *http.Response, val int
 	return nil
 }
 
-func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
-	url, err := appendPath(*c.baseURL, path)
+func (c *Client) newRequest(method, path string, queryParams map[string]string, body interface{}) (*http.Request, error) {
+	url, err := buildURL(*c.baseURL, path, queryParams)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing URL: %v", err)
 	}
@@ -162,16 +162,30 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 	return req, nil
 }
 
-func appendPath(url url.URL, path string) (*url.URL, error) {
+func buildURL(baseUrl url.URL, path string, queryParams map[string]string) (*url.URL, error) {
 	if !strings.HasPrefix(path, "/") {
-		url.Path += "/"
+		baseUrl.Path += "/"
 	}
-	url.Path += path
-	urlWithPath, err := url.Parse(url.String())
+	baseUrl.Path += path
+
+	if queryParams != nil {
+		query := baseUrl.Query()
+		for k, v := range queryParams {
+			query.Set(k, v)
+		}
+		baseUrl.RawQuery = query.Encode()
+	}
+
+	newUrl, err := baseUrl.Parse(baseUrl.String())
 	if err != nil {
 		return nil, fmt.Errorf("error appending path to URL: %v", err)
 	}
-	return urlWithPath, nil
+	return newUrl, nil
+}
+
+type errorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 type Error struct {
@@ -192,9 +206,4 @@ type accessTokenTransport struct {
 func (t *accessTokenTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Add("Authorization", "Bearer "+t.accessToken)
 	return t.rt.RoundTrip(req)
-}
-
-type errorResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
 }
